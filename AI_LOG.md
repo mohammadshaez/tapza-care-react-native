@@ -48,3 +48,41 @@
 - Human review still required:
   - Confirm the minimal screen matches the requested Phase 1A scope.
   - Confirm the repo reset is acceptable before Phase 1B begins.
+
+## 2026-09-15 - Phase 1B foundation in progress
+
+### Completed
+
+- Established the project directory structure for app, features, services, theme, locale, tests, and docs.
+- Added typed domain contracts for api, booking, config, doctor, prescription, and slot models.
+- Added Zod validation schemas for app config, request payloads, gradients, colors, and fixtures.
+- Added mock fixture data for normal and Diwali configurations, doctors, slots, and prescriptions.
+- Added Zustand-based mock control store for latency, offline, empty, conflict, and config mode simulation.
+- Added async-storage config cache with bundled fallback and last-good config persistence.
+- Added typed mock API client and query keys for config, doctors, slots, booking, and prescriptions.
+- Added theme token and config-driven theme creation utilities.
+- Added app providers for query, safe area, gesture handling, and theme context.
+- Added locale files and i18n setup for English and Hindi strings.
+- Added app foundation screen with config-mode toggling and theme diagnostics for later feature screens.
+
+### Needs to be implemented / cleaned up
+
+- Fix the remaining TypeScript alias resolution issue so imports like @/... resolve correctly across the project.
+- Resolve the remaining lint issues triggered by the web hook hydration pattern and any unused variables.
+- Clean up the re-declared schema names in gradient validation and any warning-level issues before the repo is considered fully lint-clean.
+- Verify the app provider wiring and ensure the theme config actually initializes reliably on first render.
+- Add a focused test suite for config validation, mock API responses, and theme generation.
+- Finalize the docs/log update once validation passes.
+- Run the full project validation set: TypeScript, ESLint, Jest, and Expo Doctor.
+
+### Current blockers
+
+- Import path resolution for project aliases needs confirmation against the final project layout.
+- React hook lint rule is enforcing a safer effect pattern for hydration and config loading.
+- Expo Doctor still needs a dependency-version alignment check for the installed SDK.
+
+### Validation status
+
+- Partial lint checks were run and identified remaining alias and hooks issues.
+- TypeScript and Expo validation remain pending until the path and dependency issues are corrected.
+- Foundation architecture is in place, but the repo is not yet fully green for validation.
