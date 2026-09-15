@@ -1,0 +1,50 @@
+# AI Log
+
+## 2026-09-15 - Phase 1A
+
+- Goal: remove Expo demo and establish project documentation
+- Summary of prompt: reset the generated Expo starter into a minimal Tapza Care foundation, preserve required config and assets, remove demo code, and create canonical project instructions for future agents.
+- Files created:
+  - AGENTS.md
+  - .cursor/rules/tapza-care.mdc
+  - .github/copilot-instructions.md
+  - docs/ai/PROJECT_BRIEF.md
+  - docs/ai/ARCHITECTURE.md
+  - docs/ai/IMPLEMENTATION_PLAN.md
+  - docs/ai/MCP.md
+  - src/app/_layout.tsx
+  - src/app/index.tsx
+- Files removed:
+  - root app/ directory
+  - src/app/explore.tsx
+  - src/components/animated-icon.module.css
+  - src/components/animated-icon.tsx
+  - src/components/animated-icon.web.tsx
+  - src/components/app-tabs.tsx
+  - src/components/app-tabs.web.tsx
+  - src/components/external-link.tsx
+  - src/components/hint-row.tsx
+  - src/components/themed-text.tsx
+  - src/components/themed-view.tsx
+  - src/components/web-badge.tsx
+  - src/components/ui/collapsible.tsx
+  - assets/images/tutorial-web.png
+  - assets/images/react-logo.png
+  - assets/images/react-logo@2x.png
+  - assets/images/react-logo@3x.png
+- Decisions accepted:
+  - Keep Expo Router routes under src/app only.
+  - Keep the existing git, package, config, and app assets intact.
+  - Create a minimal foundation screen instead of implementing home/booking/prescription features.
+- Suggestions rejected:
+  - Keeping the Expo tutorial UI
+  - Starting feature implementation before defining boundaries
+  - Duplicating full instructions across every editor rule file
+  - Committing credentials or personal MCP configuration
+- Validation results:
+  - TypeScript check pending after foundation shell change
+  - Lint check pending after foundation shell change
+  - Expo Doctor check pending after foundation shell change
+- Human review still required:
+  - Confirm the minimal screen matches the requested Phase 1A scope.
+  - Confirm the repo reset is acceptable before Phase 1B begins.

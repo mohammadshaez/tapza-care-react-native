@@ -1,0 +1,15 @@
+---
+description: Tapza Care project guardrails
+alwaysApply: true
+---
+
+# Tapza Care
+
+Follow the canonical project guidance in AGENTS.md, docs/ai/PROJECT_BRIEF.md, and the relevant architecture/implementation document before making changes.
+
+- Use Expo managed workflow.
+- Keep Expo Router routes in src/app and keep route files thin.
+- Use npm only and do not add dependencies without a clear reason.
+- Do not implement feature work outside the current phase.
+- Preserve strict TypeScript, no implicit any, and no project-wide rule weakening.
+- Keep changes limited to the requested phase and update AI_LOG.md after validation.
