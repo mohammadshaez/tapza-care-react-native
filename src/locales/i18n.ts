@@ -1,26 +1,31 @@
-import i18n from "i18next";
+import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 
 import en from "@/locales/en/common.json";
 import hi from "@/locales/hi/common.json";
 
-const resources = {
-  en: { common: en },
-  hi: { common: hi },
-};
+export const appI18n = createInstance();
 
-if (!i18n.isInitialized) {
-  i18n.use(initReactI18next).init({
-    compatibilityJSON: "v4",
-    resources,
-    lng: "en",
-    fallbackLng: "en",
-    defaultNS: "common",
-    ns: ["common"],
-    interpolation: {
-      escapeValue: false,
+void appI18n.use(initReactI18next).init({
+  resources: {
+    en: {
+      common: en,
     },
-  });
-}
+    hi: {
+      common: hi,
+    },
+  },
+  lng: "en",
+  fallbackLng: "en",
+  defaultNS: "common",
+  ns: ["common"],
+  returnNull: false,
+  interpolation: {
+    escapeValue: false,
+  },
+  react: {
+    useSuspense: false,
+  },
+});
 
-export default i18n;
+export default appI18n;

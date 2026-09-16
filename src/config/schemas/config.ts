@@ -1,119 +1,113 @@
 import { z } from "zod";
 
 import { ColorSchema } from "@/config/schemas/color";
-import type {
-  AppScreen,
-  LayoutConfig,
-  LayoutConfigSection,
-  LayoutTab,
-  SectionBackground,
-} from "@/types/config";
+import { GradientValueSchema } from "@/config/schemas/gradient";
 
-const appScreenSchema = z.enum([
+export const AppScreenSchema = z.enum([
   "home",
   "bookings",
   "prescriptions",
   "profile",
 ]);
 
-const festivalSchema = z.object({
-  name: z.string().trim().min(1),
-  greeting: z.string().trim().min(1),
-  bannerImageUrl: z.string().url(),
-});
+export const FestivalSchema = z
+  .object({
+    name: z.string().trim().min(1),
+    greeting: z.string().trim().min(1),
+    bannerImageUrl: z.url(),
+  })
+  .strict();
 
-const layoutThemeSchema = z.object({
-  primary: ColorSchema,
-  secondary: ColorSchema,
-  background: ColorSchema,
-  surface: ColorSchema,
-  textPrimary: ColorSchema,
-  textSecondary: ColorSchema,
-  accent: ColorSchema,
-  festival: festivalSchema,
-});
+export const LayoutThemeSchema = z
+  .object({
+    primary: ColorSchema,
+    secondary: ColorSchema,
+    background: ColorSchema,
+    surface: ColorSchema,
+    textPrimary: ColorSchema,
+    textSecondary: ColorSchema,
+    accent: ColorSchema,
+    festival: FestivalSchema,
+  })
+  .strict();
 
-const tabSchema = z
+export const LayoutTabSchema = z
   .object({
     id: z.string().trim().min(1),
     label: z.string().trim().min(1),
     icon: z.string().trim().min(1),
-    screen: appScreenSchema,
+    screen: AppScreenSchema,
   })
-  .superRefine((tab, ctx) => {
-    if (tab.id.trim().length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Tab id must be non-empty.",
-      });
-    }
-  });
+  .strict();
 
-const sectionBackgroundSchema = z.union([
-  z.object({ kind: z.literal("color"), value: ColorSchema }),
-  z.object({ kind: z.literal("gradient"), value: z.string().trim().min(1) }),
-  z.object({ kind: z.literal("image"), value: z.string().url() }),
+export const SectionBackgroundSchema = z.discriminatedUnion("kind", [
+  z
+    .object({
+      kind: z.literal("color"),
+      value: ColorSchema,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("gradient"),
+      value: GradientValueSchema,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("image"),
+      value: z.url(),
+    })
+    .strict(),
 ]);
 
-const layoutSectionSchema = z
+export const LayoutSectionSchema = z
   .object({
     id: z.string().trim().min(1),
     type: z.string().trim().min(1),
-    background: sectionBackgroundSchema,
+    background: SectionBackgroundSchema,
     title: z.string().trim().min(1),
     items: z.array(z.unknown()),
   })
-  .superRefine((section, ctx) => {
-    if (section.id.trim().length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Section id must be non-empty.",
-      });
-    }
-  });
+  .strict();
 
 export const LayoutConfigSchema = z
   .object({
     version: z.number().int().positive(),
-    theme: layoutThemeSchema,
-    tabs: z.array(tabSchema).superRefine((tabs, ctx) => {
-      const ids = new Set<string>();
-      for (const tab of tabs) {
-        if (ids.has(tab.id)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `Duplicate tab id: ${tab.id}`,
-            path: [tabs.indexOf(tab), "id"],
-          });
-        }
-        ids.add(tab.id);
-      }
-    }),
-    sections: z.array(layoutSectionSchema).superRefine((sections, ctx) => {
-      const ids = new Set<string>();
-      for (const section of sections) {
-        if (ids.has(section.id)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `Duplicate section id: ${section.id}`,
-            path: [sections.indexOf(section), "id"],
-          });
-        }
-        ids.add(section.id);
-      }
-    }),
+    theme: LayoutThemeSchema,
+    tabs: z.array(LayoutTabSchema).min(1),
+    sections: z.array(LayoutSectionSchema),
   })
-  .strict();
+  .strict()
+  .superRefine((config, context) => {
+    const tabIds = new Set<string>();
 
-export type LayoutConfigInput = z.infer<typeof LayoutConfigSchema>;
+    config.tabs.forEach((tab, index) => {
+      if (tabIds.has(tab.id)) {
+        context.addIssue({
+          code: "custom",
+          message: `Duplicate tab id: ${tab.id}`,
+          path: ["tabs", index, "id"],
+        });
+      }
 
-export const AppScreenSchema = appScreenSchema;
-export const SectionBackgroundSchema = sectionBackgroundSchema;
-export const LayoutTabSchema = tabSchema;
-export const LayoutSectionSchema = layoutSectionSchema;
+      tabIds.add(tab.id);
+    });
 
-export type AppScreenValue = AppScreen;
-export type SectionBackgroundValue = SectionBackground;
-export type LayoutTabValue = LayoutTab;
-export type LayoutConfigSectionValue = LayoutConfigSection;
-export type LayoutConfigValue = LayoutConfig;
+    const sectionIds = new Set<string>();
+
+    config.sections.forEach((section, index) => {
+      if (sectionIds.has(section.id)) {
+        context.addIssue({
+          code: "custom",
+          message: `Duplicate section id: ${section.id}`,
+          path: ["sections", index, "id"],
+        });
+      }
+
+      sectionIds.add(section.id);
+    });
+  });
+
+export type LayoutConfigInput = z.input<typeof LayoutConfigSchema>;
+export type ValidatedLayoutConfig = z.output<typeof LayoutConfigSchema>;

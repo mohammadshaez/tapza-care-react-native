@@ -2,50 +2,69 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { LayoutConfigSchema } from "@/config/schemas/config";
 import { normalConfig } from "@/services/mock/fixtures/config.normal";
+import type { LayoutConfig } from "@/types/config";
 
 const LAST_GOOD_CONFIG_KEY = "tapza-care:last-good-config:v1";
 
+export type ConfigSource = "cached" | "bundled";
+
 export type ConfigCacheState = {
-  config: unknown;
-  source: "cached" | "bundled" | "fresh";
-  error: string | null;
+  config: LayoutConfig;
+  source: ConfigSource;
+  warning: string | null;
 };
+
+function getBundledConfig(): LayoutConfig {
+  return LayoutConfigSchema.parse(normalConfig);
+}
 
 export async function readLastGoodConfig(): Promise<ConfigCacheState> {
   try {
-    const raw = await AsyncStorage.getItem(LAST_GOOD_CONFIG_KEY);
-    if (!raw) {
-      return { config: normalConfig, source: "bundled", error: null };
-    }
+    const storedValue = await AsyncStorage.getItem(LAST_GOOD_CONFIG_KEY);
 
-    const json = JSON.parse(raw) as unknown;
-    const parsed = LayoutConfigSchema.safeParse(json);
-    if (!parsed.success) {
-      await AsyncStorage.removeItem(LAST_GOOD_CONFIG_KEY);
+    if (!storedValue) {
       return {
-        config: normalConfig,
+        config: getBundledConfig(),
         source: "bundled",
-        error: "Stored config is invalid.",
+        warning: null,
       };
     }
 
-    return { config: parsed.data, source: "cached", error: null };
+    const untrustedConfig = JSON.parse(storedValue) as unknown;
+    const result = LayoutConfigSchema.safeParse(untrustedConfig);
+
+    if (!result.success) {
+      await AsyncStorage.removeItem(LAST_GOOD_CONFIG_KEY);
+
+      return {
+        config: getBundledConfig(),
+        source: "bundled",
+        warning: "The stored configuration was invalid and has been cleared.",
+      };
+    }
+
+    return {
+      config: result.data,
+      source: "cached",
+      warning: null,
+    };
   } catch {
     return {
-      config: normalConfig,
+      config: getBundledConfig(),
       source: "bundled",
-      error: "Unable to read cached config.",
+      warning: "The stored configuration could not be read.",
     };
   }
 }
 
-export async function writeLastGoodConfig(config: unknown): Promise<void> {
-  const parsed = LayoutConfigSchema.safeParse(config);
-  if (!parsed.success) {
-    return;
-  }
+export async function writeLastGoodConfig(
+  untrustedConfig: unknown,
+): Promise<LayoutConfig> {
+  const config = LayoutConfigSchema.parse(untrustedConfig);
 
-  await AsyncStorage.setItem(LAST_GOOD_CONFIG_KEY, JSON.stringify(parsed.data));
+  await AsyncStorage.setItem(LAST_GOOD_CONFIG_KEY, JSON.stringify(config));
+
+  return config;
 }
 
 export async function clearLastGoodConfig(): Promise<void> {

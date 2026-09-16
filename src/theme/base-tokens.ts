@@ -1,16 +1,6 @@
-export const baseTokens = {
-  colors: {
-    primary: "#0E5BD7",
-    secondary: "#2FBF8F",
-    background: "#F5F9FF",
-    surface: "#FFFFFF",
-    textPrimary: "#132238",
-    textSecondary: "#5C6B7A",
-    accent: "#F7B267",
-    success: "#2FBF8F",
-    error: "#D14343",
-    warning: "#F7B267",
-  },
+import type { AppTheme, ThemeColors } from "@/theme/theme.types";
+
+export const baseTokens: Omit<AppTheme, "colors"> = {
   spacing: {
     xs: 4,
     sm: 8,
@@ -20,10 +10,26 @@ export const baseTokens = {
     xxl: 24,
   },
   typography: {
-    body: { fontSize: 16, lineHeight: 24, fontWeight: "500" },
-    bodySmall: { fontSize: 14, lineHeight: 20, fontWeight: "500" },
-    title: { fontSize: 32, lineHeight: 40, fontWeight: "700" },
-    subtitle: { fontSize: 24, lineHeight: 32, fontWeight: "600" },
+    body: {
+      fontSize: 16,
+      lineHeight: 24,
+      fontWeight: "500",
+    },
+    bodySmall: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: "500",
+    },
+    title: {
+      fontSize: 32,
+      lineHeight: 40,
+      fontWeight: "700",
+    },
+    subtitle: {
+      fontSize: 24,
+      lineHeight: 32,
+      fontWeight: "600",
+    },
   },
   radii: {
     sm: 8,
@@ -43,4 +49,20 @@ export const baseTokens = {
     md: 4,
     lg: 8,
   },
+};
+
+export const fallbackColors: ThemeColors = {
+  primary: "#0E5BD7",
+  onPrimary: "#FFFFFF",
+  secondary: "#2FBF8F",
+  onSecondary: "#132238",
+  background: "#F5F9FF",
+  surface: "#FFFFFF",
+  textPrimary: "#132238",
+  textSecondary: "#5C6B7A",
+  accent: "#F7B267",
+  onAccent: "#132238",
+  success: "#1F8A65",
+  error: "#B42318",
+  warning: "#B54708",
 };

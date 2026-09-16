@@ -1,5 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import {
   BookingSchema,
   CreateBookingInputSchema,
@@ -75,10 +73,10 @@ export class MockApiClient {
 
     const config = getCurrentConfigFixture();
     const validated = await validateAndClone(config, LayoutConfigSchema);
-    await AsyncStorage.setItem(
-      "tapza-care:last-good-config:v1",
-      JSON.stringify(validated),
-    );
+    // await AsyncStorage.setItem(
+    //   "tapza-care:last-good-config:v1",
+    //   JSON.stringify(validated),
+    // );
     return structuredClone(validated);
   }
 

@@ -1,11 +1,16 @@
+import type { TextStyle } from "react-native";
+
 export type ThemeColors = {
   primary: string;
+  onPrimary: string;
   secondary: string;
+  onSecondary: string;
   background: string;
   surface: string;
   textPrimary: string;
   textSecondary: string;
   accent: string;
+  onAccent: string;
   success: string;
   error: string;
   warning: string;
@@ -20,11 +25,17 @@ export type ThemeSpacing = {
   xxl: number;
 };
 
+export type ThemeTextStyle = {
+  fontSize: number;
+  lineHeight: number;
+  fontWeight: NonNullable<TextStyle["fontWeight"]>;
+};
+
 export type ThemeTypography = {
-  body: { fontSize: number; lineHeight: number; fontWeight: string };
-  bodySmall: { fontSize: number; lineHeight: number; fontWeight: string };
-  title: { fontSize: number; lineHeight: number; fontWeight: string };
-  subtitle: { fontSize: number; lineHeight: number; fontWeight: string };
+  body: ThemeTextStyle;
+  bodySmall: ThemeTextStyle;
+  title: ThemeTextStyle;
+  subtitle: ThemeTextStyle;
 };
 
 export type AppTheme = {

@@ -1,97 +1,220 @@
 import type { LayoutConfig } from "@/types/config";
 
 export const diwaliConfig: LayoutConfig = {
-  version: 1,
+  version: 2,
   theme: {
-    primary: "#B71C1C",
-    secondary: "#FFB703",
-    background: "#FFF8F3",
+    primary: "#8F2D20",
+    secondary: "#FFD166",
+    background: "#FFF9F3",
     surface: "#FFFFFF",
-    textPrimary: "#2A1A12",
-    textSecondary: "#6E5148",
-    accent: "#FF7F50",
+    textPrimary: "#3D241F",
+    textSecondary: "#725D57",
+    accent: "#E76F51",
     festival: {
       name: "Diwali",
-      greeting: "Shubh Deepavali care for your family",
+      greeting: "Shubh Deepavali",
       bannerImageUrl:
         "https://images.unsplash.com/photo-1605792657660-d3987d8a4a5b?auto=format&fit=crop&w=1200&q=80",
     },
   },
   tabs: [
-    { id: "home", label: "Home", icon: "home", screen: "home" },
+    {
+      id: "home",
+      label: "Home",
+      icon: "home",
+      screen: "home",
+    },
     {
       id: "prescriptions",
-      label: "Prescriptions",
-      icon: "clipboard",
+      label: "Medicines",
+      icon: "clipboard-list",
       screen: "prescriptions",
     },
-    { id: "bookings", label: "Bookings", icon: "calendar", screen: "bookings" },
-    { id: "profile", label: "Profile", icon: "user", screen: "profile" },
+    {
+      id: "bookings",
+      label: "Bookings",
+      icon: "calendar",
+      screen: "bookings",
+    },
+    {
+      id: "profile",
+      label: "Family",
+      icon: "users",
+      screen: "profile",
+    },
   ],
   sections: [
     {
-      id: "hero-1",
+      id: "diwali-hero",
       type: "hero_banner",
-      background: { kind: "gradient", value: "#FFF4E5|#FFFFFF" },
-      title: "Festival care, lighter on the mind",
-      items: [{ kind: "banner", text: "Book family consultations with ease" }],
-    },
-    {
-      id: "chips-1",
-      type: "category_chips",
-      background: { kind: "color", value: "#FFF9F4" },
-      title: "Festival essentials",
-      items: [
-        { id: "family", label: "Family clinic" },
-        { id: "lab", label: "Tests" },
-        { id: "pharmacy", label: "Pharmacy" },
-      ],
-    },
-    {
-      id: "quick-1",
-      type: "quick_actions",
-      background: { kind: "color", value: "#FDF1ED" },
-      title: "Today’s care",
-      items: [
-        { id: "general", label: "General care", icon: "doctor" },
-        { id: "vaccines", label: "Vaccines", icon: "shield" },
-      ],
-    },
-    {
-      id: "services-1",
-      type: "service_grid",
-      background: { kind: "color", value: "#FFFFFF" },
-      title: "Popular Diwali care plans",
-      items: [
-        { id: "diabetes", label: "Diabetes follow-up", priceInr: 499 },
-        { id: "lab", label: "Blood tests", priceInr: 699 },
-        { id: "home-care", label: "Home care support", priceInr: 1299 },
-      ],
-    },
-    {
-      id: "doctors-1",
-      type: "doctor_carousel",
-      background: { kind: "gradient", value: "#FFF9F0|#FFF4EE" },
-      title: "Doctors available now",
-      items: [{ id: "doc-2" }, { id: "doc-4" }, { id: "doc-5" }],
-    },
-    {
-      id: "offer-1",
-      type: "offer_strip",
+      title: "Healthy celebrations",
       background: {
-        kind: "image",
-        value:
-          "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80",
+        kind: "gradient",
+        value: "#FFE3A3|#FFF9F3",
       },
-      title: "Festive wellness offers",
-      items: [{ id: "offer-2", label: "Up to 20% off family consults" }],
+      items: [
+        {
+          id: "diwali-hero-item",
+          greeting: "Shubh Deepavali, Ramesh",
+          description:
+            "Keep your family’s health on track throughout the celebrations.",
+          imageUrl:
+            "https://images.unsplash.com/photo-1605792657660-d3987d8a4a5b?auto=format&fit=crop&w=1200&q=80",
+          ctaLabel: "Find a doctor",
+          action: "book",
+        },
+      ],
     },
     {
-      id: "festival-countdown",
+      id: "diwali-offer",
+      type: "offer_strip",
+      title: "Diwali care offer",
+      background: {
+        kind: "color",
+        value: "#8F2D20",
+      },
+      items: [
+        {
+          id: "diwali-consult-offer",
+          message:
+            "Diwali special: save 20% on family consultations this week.",
+        },
+      ],
+    },
+    {
+      id: "diwali-actions",
+      type: "quick_actions",
+      title: "Festival care",
+      background: {
+        kind: "color",
+        value: "#FFF0D0",
+      },
+      items: [
+        {
+          id: "book",
+          label: "Book",
+          icon: "calendar-plus",
+          action: "book",
+        },
+        {
+          id: "prescriptions",
+          label: "Medicines",
+          icon: "clipboard-list",
+          action: "prescriptions",
+        },
+        {
+          id: "reminders",
+          label: "Reminders",
+          icon: "alarm-clock",
+          action: "reminders",
+        },
+        {
+          id: "family",
+          label: "Family",
+          icon: "users",
+          action: "family",
+        },
+      ],
+    },
+    {
+      id: "diwali-services",
+      type: "service_grid",
+      title: "Festival health services",
+      background: {
+        kind: "color",
+        value: "#FFFFFF",
+      },
+      items: [
+        {
+          id: "family-consult",
+          name: "Family consultation",
+          priceInr: 699,
+          imageUrl:
+            "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80",
+          badge: "Diwali offer",
+          doctorId: "doc-1",
+        },
+        {
+          id: "sugar-check",
+          name: "Blood sugar check",
+          priceInr: 299,
+          imageUrl:
+            "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=600&q=80",
+          badge: "Home visit",
+        },
+        {
+          id: "general-care",
+          name: "General consultation",
+          priceInr: 449,
+          imageUrl:
+            "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&w=600&q=80",
+          doctorId: "doc-3",
+        },
+      ],
+    },
+    {
+      id: "diwali-doctors",
+      type: "doctor_carousel",
+      title: "Doctors available during Diwali",
+      background: {
+        kind: "gradient",
+        value: "#FFF3E6|#FFFFFF",
+      },
+      items: [
+        {
+          doctorId: "doc-2",
+          nextAvailableLabel: "Today, 4:00 PM",
+        },
+        {
+          doctorId: "doc-4",
+          nextAvailableLabel: "Tomorrow, 9:30 AM",
+        },
+        {
+          doctorId: "doc-5",
+          nextAvailableLabel: "Tomorrow, 11:00 AM",
+        },
+      ],
+    },
+    {
+      id: "diwali-categories",
+      type: "category_chips",
+      title: "Browse care",
+      background: {
+        kind: "color",
+        value: "#FFF9F3",
+      },
+      items: [
+        {
+          id: "consult",
+          label: "Consult",
+          icon: "stethoscope",
+        },
+        {
+          id: "lab-tests",
+          label: "Lab tests",
+          icon: "test-tube",
+        },
+        {
+          id: "pharmacy",
+          label: "Pharmacy",
+          icon: "pill",
+        },
+        {
+          id: "vaccines",
+          label: "Vaccines",
+          icon: "shield-plus",
+        },
+      ],
+    },
+    {
+      id: "unknown-festival-section",
       type: "festival_countdown",
-      background: { kind: "color", value: "#FFF4E5" },
-      title: "Festival countdown",
-      items: [{ id: "countdown-1", label: "Count down to celebration care" }],
+      title: "Unsupported section",
+      background: {
+        kind: "color",
+        value: "#FFF0D0",
+      },
+      items: [],
     },
   ],
 };
