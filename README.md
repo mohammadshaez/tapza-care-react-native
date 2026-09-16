@@ -107,6 +107,48 @@ This project took roughly:
 
 Total: about 6–9 focused hours for a working, structured prototype rather than a production-grade healthcare app.
 
+## Android APK / installable build
+
+### Option A: local APK build (Android)
+
+```bash
+npx expo prebuild --clean
+cd android
+./gradlew assembleRelease
+```
+
+The generated APK will usually be under:
+
+```text
+android/app/build/outputs/apk/release/
+```
+
+Install it on a device with Android 12+ by enabling "Install unknown apps" for your file manager or Android package installer, then opening the APK.
+
+### Option B: Expo build link
+
+If you use EAS or an Expo-hosted build service, generate a build and share the link in the project release notes. The app should be distributed as a signed Android APK or an Expo build link, with the install steps listed in the release description.
+
+### Release notes / distribution
+
+- Attach the APK to a GitHub Release if you are publishing from a GitHub-backed repo.
+- If a GitHub Release is not available yet, share the Expo build URL in the repo README and mention the exact installation steps.
+- Keep the instructions explicit: install the APK, accept the security prompt, then open the app.
+
+## Demo assets and recordings
+
+The repo includes a demo-ready folder for screenshots and a short video walkthrough:
+
+```text
+docs/
+  demo/
+    README.md
+    screenshots/
+    demo-video.mp4
+```
+
+Place the Android device screenshots and the 2–3 minute walkthrough video there. The demo should include both themes, the forced booking failure flow, and the reminders flow.
+
 ## Current status
 
 This repo is a functional prototype foundation with:
