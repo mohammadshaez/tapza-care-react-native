@@ -3,6 +3,7 @@
 Add the Android screenshots and the short walkthrough video for this demo here.
 
 Required items:
+
 - normal theme screenshot
 - Diwali theme screenshot
 - booking flow with forced failure screenshot or short clip
