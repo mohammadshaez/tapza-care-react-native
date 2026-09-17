@@ -12,3 +12,5 @@ export type CreateBookingInput = {
   doctorId: string;
   slotId: string;
 };
+
+export type CreateBookingRequest = CreateBookingInput;

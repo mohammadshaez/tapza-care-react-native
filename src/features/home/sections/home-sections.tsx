@@ -367,19 +367,21 @@ export function DoctorCarouselSection({
                 transition={theme.motion.fast}
               />
 
-              <Text numberOfLines={1} style={styles.cardTitle}>
-                {item.doctor.name}
-              </Text>
+              <View style={styles.doctorMeta}>
+                <Text numberOfLines={1} style={styles.cardTitle}>
+                  {item.doctor.name}
+                </Text>
 
-              <Text numberOfLines={1} style={styles.description}>
-                {item.doctor.specialty}
-              </Text>
+                <Text numberOfLines={1} style={styles.description}>
+                  {item.doctor.specialty}
+                </Text>
 
-              <Text numberOfLines={1} style={styles.availability}>
-                Next: {item.availability}
-              </Text>
+                <Text numberOfLines={1} style={styles.availability}>
+                  Next: {item.availability}
+                </Text>
 
-              <Text style={styles.price}>₹{item.doctor.feeInr}</Text>
+                <Text style={styles.price}>₹{item.doctor.feeInr}</Text>
+              </View>
             </Pressable>
           )}
         />
@@ -402,6 +404,17 @@ export function OfferStripSection({
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const offer = items[0];
+  const isDarkBackground =
+    background.kind === "color" ? isDarkColor(background.value) : false;
+  const offerTitleColor = isDarkBackground
+    ? theme.colors.onPrimary
+    : theme.colors.textPrimary;
+  const offerBodyColor = isDarkBackground
+    ? theme.colors.onPrimary
+    : theme.colors.textSecondary;
+  const offerIconColor = isDarkBackground
+    ? theme.colors.onPrimary
+    : theme.colors.primary;
 
   if (!offer) {
     return null;
@@ -411,12 +424,16 @@ export function OfferStripSection({
     <SectionBand background={background}>
       <View style={styles.offer}>
         <View style={styles.offerCopy}>
-          <Text style={styles.offerTitle}>{title}</Text>
+          <Text style={[styles.offerTitle, { color: offerTitleColor }]}>
+            {title}
+          </Text>
 
-          <Text style={styles.description}>{offer.message}</Text>
+          <Text style={[styles.description, { color: offerBodyColor }]}>
+            {offer.message}
+          </Text>
         </View>
 
-        <AppIcon color={theme.colors.primary} name="chevron-right" size={24} />
+        <AppIcon color={offerIconColor} name="chevron-right" size={24} />
       </View>
     </SectionBand>
   );
@@ -429,6 +446,28 @@ export type SectionComponentProps = {
   onAction: ActionHandler;
   onBook: (doctorId?: string) => void;
 };
+
+function isDarkColor(value: string): boolean {
+  const normalized = value.replace("#", "").trim();
+  const hex =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((character) => character + character)
+          .join("")
+      : normalized;
+
+  if (hex.length !== 6) {
+    return false;
+  }
+
+  const red = Number.parseInt(hex.slice(0, 2), 16);
+  const green = Number.parseInt(hex.slice(2, 4), 16);
+  const blue = Number.parseInt(hex.slice(4, 6), 16);
+  const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
+
+  return luminance < 0.5;
+}
 
 function createStyles(theme: AppTheme) {
   return StyleSheet.create({
@@ -591,9 +630,9 @@ function createStyles(theme: AppTheme) {
     },
     doctorCard: {
       width: 220,
-      gap: theme.spacing.xs,
       overflow: "hidden",
-      paddingBottom: theme.spacing.md,
+      borderWidth: 1,
+      borderColor: theme.colors.secondary,
       borderRadius: theme.radii.lg,
       backgroundColor: theme.colors.surface,
       elevation: theme.elevation.md,
@@ -601,7 +640,12 @@ function createStyles(theme: AppTheme) {
     doctorImage: {
       width: "100%",
       aspectRatio: 1.45,
-      marginBottom: theme.spacing.sm,
+    },
+    doctorMeta: {
+      gap: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.md,
+      paddingTop: theme.spacing.sm,
+      paddingBottom: theme.spacing.md,
     },
     availability: {
       ...theme.typography.bodySmall,

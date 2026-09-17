@@ -110,7 +110,11 @@ export function HomeScreen() {
 
   return (
     <View style={styles.screen}>
-      <HomeHeader greeting={config.theme.festival.greeting} scrollY={scrollY} />
+      <HomeHeader
+        greeting={config.theme.festival.greeting}
+        scrollY={scrollY}
+        topInset={insets.top}
+      />
 
       <Animated.FlatList
         data={config.sections}

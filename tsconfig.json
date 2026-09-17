@@ -6,6 +6,7 @@
     "noImplicitOverride": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "types": ["jest"],
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {

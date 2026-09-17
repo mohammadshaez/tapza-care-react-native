@@ -68,5 +68,17 @@
     "format:check": "prettier --check .",
     "validate": "npm run typecheck && npm run lint && npm run test"
   },
+  "jest": {
+    "preset": "jest-expo",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.cjs"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
+    "testMatch": [
+      "**/?(*.)+(spec|test).[jt]s?(x)"
+    ]
+  },
   "private": true
 }

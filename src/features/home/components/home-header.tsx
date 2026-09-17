@@ -1,123 +1,185 @@
-import { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
-  Extrapolation,
   interpolate,
   useAnimatedStyle,
   useReducedMotion,
   type SharedValue,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppTheme } from "@/theme/use-app-theme";
+import { useMockControlsStore } from "@/store/mock-controls.store";
 import type { AppTheme } from "@/theme/theme.types";
 
 type HomeHeaderProps = {
   scrollY: SharedValue<number>;
   greeting: string;
+  topInset?: number;
 };
 
-export function getHomeHeaderHeight(theme: AppTheme, topInset: number): number {
-  return topInset + theme.sizes.minimumTapTarget + theme.spacing.xxl;
+const EXPANDED_HEIGHT = 112;
+const COLLAPSED_HEIGHT = 72;
+
+export function getHomeHeaderHeight(_theme: AppTheme, topInset = 0) {
+  return EXPANDED_HEIGHT + topInset;
 }
 
-export function HomeHeader({ scrollY, greeting }: HomeHeaderProps) {
+export function HomeHeader({
+  scrollY,
+  greeting,
+  topInset = 0,
+}: HomeHeaderProps) {
   const { theme } = useAppTheme();
-  const insets = useSafeAreaInsets();
   const reduceMotion = useReducedMotion();
 
-  const expandedHeight = getHomeHeaderHeight(theme, insets.top);
+  const configMode = useMockControlsStore((state) => state.configMode);
+  const setConfigMode = useMockControlsStore((state) => state.setConfigMode);
 
-  const collapsedHeight =
-    insets.top + theme.sizes.minimumTapTarget + theme.spacing.sm;
+  const isFestivalMode = configMode === "diwali";
 
-  const styles = useMemo(
-    () => createStyles(theme, insets.top),
-    [theme, insets.top],
-  );
-
-  const animatedStyle = useAnimatedStyle(() => {
+  const headerAnimatedStyle = useAnimatedStyle(() => {
     const progress = reduceMotion
-      ? 1
-      : interpolate(
-          scrollY.value,
-          [0, expandedHeight],
-          [0, 1],
-          Extrapolation.CLAMP,
-        );
+      ? 0
+      : interpolate(scrollY.value, [0, 96], [0, 1], "clamp");
 
     return {
-      height: interpolate(progress, [0, 1], [expandedHeight, collapsedHeight]),
+      height: interpolate(
+        progress,
+        [0, 1],
+        [EXPANDED_HEIGHT + topInset, COLLAPSED_HEIGHT + topInset],
+      ),
     };
   });
 
-  const greetingStyle = useAnimatedStyle(() => ({
-    opacity: reduceMotion
-      ? 0
-      : interpolate(
-          scrollY.value,
-          [0, theme.spacing.xxl * 2],
-          [1, 0],
-          Extrapolation.CLAMP,
-        ),
-    transform: [
-      {
-        translateY: reduceMotion
-          ? 0
-          : interpolate(
-              scrollY.value,
-              [0, theme.spacing.xxl * 2],
-              [0, -theme.spacing.md],
-              Extrapolation.CLAMP,
-            ),
-      },
-    ],
-  }));
+  const greetingAnimatedStyle = useAnimatedStyle(() => {
+    if (reduceMotion) {
+      return {
+        opacity: 1,
+        transform: [{ translateY: 0 }],
+      };
+    }
+
+    return {
+      opacity: interpolate(scrollY.value, [0, 52], [1, 0], "clamp"),
+      transform: [
+        {
+          translateY: interpolate(scrollY.value, [0, 52], [0, -8], "clamp"),
+        },
+      ],
+    };
+  });
 
   return (
-    <Animated.View style={[styles.header, animatedStyle]}>
-      <View style={styles.content}>
-        <Text accessibilityRole="header" style={styles.appName}>
-          Tapza Care
-        </Text>
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.surface,
+          borderBottomColor: theme.colors.textSecondary,
+          paddingHorizontal: theme.spacing.lg,
+          paddingTop: topInset,
+        },
+        headerAnimatedStyle,
+      ]}
+    >
+      <View style={styles.row}>
+        <View style={styles.copy}>
+          <Text
+            maxFontSizeMultiplier={1.4}
+            style={[
+              styles.appName,
+              {
+                color: theme.colors.primary,
+                fontSize: theme.typography.title.fontSize,
+                lineHeight: theme.typography.title.lineHeight,
+              },
+            ]}
+          >
+            Tapza Care
+          </Text>
 
-        <Animated.Text
-          numberOfLines={1}
-          style={[styles.greeting, greetingStyle]}
+          <Animated.Text
+            numberOfLines={1}
+            maxFontSizeMultiplier={1.4}
+            style={[
+              styles.greeting,
+              {
+                color: theme.colors.textSecondary,
+                fontSize: theme.typography.body.fontSize,
+                lineHeight: theme.typography.body.lineHeight,
+              },
+              greetingAnimatedStyle,
+            ]}
+          >
+            {greeting}
+          </Animated.Text>
+        </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={
+            isFestivalMode ? "Switch to normal theme" : "Switch to Diwali theme"
+          }
+          onPress={() => setConfigMode(isFestivalMode ? "normal" : "diwali")}
+          style={({ pressed }) => [
+            styles.switchButton,
+            {
+              backgroundColor: theme.colors.primary,
+              borderRadius: theme.radii.xl,
+              opacity: pressed ? 0.8 : 1,
+              paddingHorizontal: theme.spacing.md,
+            },
+          ]}
         >
-          {greeting}
-        </Animated.Text>
+          <Text
+            maxFontSizeMultiplier={1.3}
+            style={[
+              styles.switchText,
+              {
+                color: theme.colors.onPrimary,
+                fontSize: theme.typography.bodySmall.fontSize,
+                lineHeight: theme.typography.bodySmall.lineHeight,
+              },
+            ]}
+          >
+            {isFestivalMode ? "Normal" : "Diwali"}
+          </Text>
+        </Pressable>
       </View>
     </Animated.View>
   );
 }
 
-function createStyles(theme: AppTheme, topInset: number) {
-  return StyleSheet.create({
-    header: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      left: 0,
-      zIndex: 10,
-      overflow: "hidden",
-      backgroundColor: theme.colors.surface,
-      elevation: theme.elevation.md,
-    },
-    content: {
-      flex: 1,
-      justifyContent: "flex-end",
-      paddingTop: topInset,
-      paddingHorizontal: theme.spacing.lg,
-      paddingBottom: theme.spacing.sm,
-    },
-    appName: {
-      ...theme.typography.subtitle,
-      color: theme.colors.textPrimary,
-    },
-    greeting: {
-      ...theme.typography.bodySmall,
-      color: theme.colors.textSecondary,
-    },
-  });
-}
+const styles = StyleSheet.create({
+  container: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    justifyContent: "center",
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 0,
+    zIndex: 20,
+  },
+  row: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  copy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  appName: {
+    fontWeight: "800",
+  },
+  greeting: {
+    marginTop: 2,
+  },
+  switchButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 44,
+    minWidth: 72,
+  },
+  switchText: {
+    fontWeight: "700",
+  },
+});

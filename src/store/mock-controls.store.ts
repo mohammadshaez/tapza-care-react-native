@@ -17,6 +17,7 @@ export type MockControls = {
   emptySlots: boolean;
   emptyPrescriptions: boolean;
   conflictNextBooking: boolean;
+  forceBookingConflict: boolean;
 };
 
 export type MockControlsState = MockControls & {
@@ -48,6 +49,7 @@ const initialState: MockControls = {
   emptySlots: false,
   emptyPrescriptions: false,
   conflictNextBooking: false,
+  forceBookingConflict: false,
 };
 
 export const useMockControlsStore = create<MockControlsState>()(
@@ -72,7 +74,8 @@ export const useMockControlsStore = create<MockControlsState>()(
         set((state) => ({ emptySlots: !state.emptySlots })),
       toggleEmptyPrescriptions: () =>
         set((state) => ({ emptyPrescriptions: !state.emptyPrescriptions })),
-      triggerNextBookingConflict: () => set({ conflictNextBooking: true }),
+      triggerNextBookingConflict: () =>
+        set({ conflictNextBooking: true, forceBookingConflict: true }),
       reset: () => set(initialState),
     }),
     {

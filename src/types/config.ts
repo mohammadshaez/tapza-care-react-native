@@ -50,3 +50,5 @@ export type LayoutConfig = {
   tabs: LayoutTab[];
   sections: LayoutConfigSection[];
 };
+
+export type LayoutSection = LayoutConfigSection;

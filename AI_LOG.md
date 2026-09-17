@@ -86,3 +86,36 @@
 - Partial lint checks were run and identified remaining alias and hooks issues.
 - TypeScript and Expo validation remain pending until the path and dependency issues are corrected.
 - Foundation architecture is in place, but the repo is not yet fully green for validation.
+
+## 2026-09-17 - Compatibility and regression fix
+
+- Goal: resolve the broken imports, outdated mock names, schema mismatches, and theme-contract errors preventing compilation and tests from succeeding.
+- Summary of prompt: fix the previously introduced compatibility bugs without changing the approved architecture, then verify the app-state and config validation flows.
+- Files changed:
+  - src/features/home/components/home-header.tsx
+  - src/store/mock-controls.store.ts
+  - src/services/api/mock-api-client.ts
+  - src/services/mock/mock-api-client.ts
+  - src/types/booking.ts
+  - src/types/config.ts
+  - src/theme/theme-provider.tsx
+  - tsconfig.json
+  - src/mocks/fixtures/*.ts
+- Root cause:
+  - Home header imported a non-existent provider path.
+  - Mock fixture paths and type names were inconsistent with the current services folder layout.
+  - Booking controls still referenced the older forceBookingConflict contract while the app uses conflictNextBooking.
+  - Theme usage in the header was based on a stale token shape that did not match the actual AppTheme contract.
+  - Jest globals were not enabled in TypeScript for the test files.
+- Decisions made:
+  - Reused the real theme hook and token shape instead of introducing unsupported properties.
+  - Added compatibility aliases for legacy fixture imports without changing the branch’s architecture.
+  - Kept the mock control model consistent with active feature usage, including a reset path for forced conflict state.
+- Validation results:
+  - TypeScript check: passed
+  - Relevant Jest suites: 3 passed, 7 tests passed
+  - Lint: 0 errors, 2 warnings remain in unrelated files (home-screen hook dependency and unused import in prescriptions-screen)
+- Human review still required:
+  - Decide whether to clean the remaining lint warnings before merging.
+- Suggested commit message:
+  - fix: align theme, test, and mock contracts for config and booking flows

@@ -48,7 +48,7 @@ function ensureNoFailure(flag: boolean, code: string, message: string): void {
 
 async function withLatency(): Promise<void> {
   const latencyMs =
-    useMockControlsStore.getState().latencyMs || DEFAULT_DELAY_MS;
+    useMockControlsStore.getState().latencyMs ?? DEFAULT_DELAY_MS;
   await wait(latencyMs);
 }
 
@@ -125,7 +125,7 @@ export class MockApiClient {
     ensureNotOffline();
     await withLatency();
 
-    const { failBookings, conflictNextBooking } =
+    const { failBookings, conflictNextBooking, forceBookingConflict } =
       useMockControlsStore.getState();
     ensureNoFailure(failBookings, "mock_failure", "Booking request failed.");
 
@@ -145,9 +145,13 @@ export class MockApiClient {
     if (
       mockBookedSlots.has(slot.id) ||
       !slot.available ||
-      conflictNextBooking
+      conflictNextBooking ||
+      forceBookingConflict
     ) {
-      useMockControlsStore.setState({ conflictNextBooking: false });
+      useMockControlsStore.setState({
+        conflictNextBooking: false,
+        forceBookingConflict: false,
+      });
       throw new ApiError(
         409,
         "conflict",
