@@ -1,6 +1,17 @@
 # Tapza Care
 
-Tapza Care is a React Native + Expo prototype for a health-care booking experience with configurable home sections, mock backend behavior, and test coverage around config validation and booking conflict handling.
+Tapza Care is a React Native + Expo prototype for a care-booking experience with a configurable home screen, mock backend behavior, type-safe config validation, and focused regression tests for booking and layout contracts.
+
+## Repository status
+
+The repo is currently in a validated prototype state:
+
+- TypeScript checks pass
+- Relevant Jest suites pass
+- The app structure and mock APIs are stable
+- Android release APK generation is still blocked on a missing local Android SDK in this environment
+
+This means the app is functionally ready for extension and demonstration, but the actual signed Android APK output still requires a machine with the Android SDK configured.
 
 ## How to run
 
@@ -35,81 +46,87 @@ npm test
 
 ```text
 src/
-  app/                  # Expo Router screens; keep thin and route-focused
-  components/          # reusable UI pieces and layout wrappers
-  config/              # runtime config and validation schemas
-  features/            # feature-specific screens, hooks, and section renderers
+  app/                        # thin Expo Router screens
+  features/
+    home/                    # home screen, header, and config-driven sections
+    booking/                 # booking screen and booking state logic
+    prescriptions/           # prescription list and report flow
   services/
-    api/               # typed API boundary and mock client
-    cache/             # config persistence and last-good cache logic
-    mock/              # mock backend fixtures and validation helpers
-  store/               # small Zustand stores for client-side toggles
-  theme/               # design tokens, theme derivation, and theme provider
-  types/               # shared domain contracts
-  tests/               # focused validation and behavior regression checks
+    api/                     # typed API boundary and mock client
+    cache/                   # config persistence fallback logic
+    mock/                    # fixtures and mock backend helpers
+  store/                     # Zustand stores for app toggles and test controls
+  theme/                     # tokens, theme creation, and provider wiring
+  config/                    # config schema and validation layer
+  types/                     # shared domain contracts
+  tests/                     # Jest coverage for config and booking behavior
+  locales/                   # i18n strings for English and Hindi
 ```
 
-Why this shape:
+Why this structure:
 
-- routes stay thin and delegate to feature logic
-- home/domain behavior lives close to the relevant screen code
-- validation and API boundaries are explicit instead of spread across components
-- theme and config are centralised so the app can switch between “normal” and Diwali layouts without breaking the UI model
+- route files stay thin and delegate to feature logic
+- the home and booking flows live with their own hooks and renderers
+- config and schema validation are centralised, not scattered through UI code
+- mock data and the API layer are separated from screen code so they can evolve independently
 
 ## Architecture decisions
 
-### Expo Router + feature-first folders
+### Expo Router + feature-first layout
 
-The app uses Expo Router for route-level structure but keeps the actual implementation in feature folders under `src/features`. This avoids mixing business logic into route files and keeps screens readable.
+The app keeps routes in `src/app`, but the real business logic and rendering live under feature folders. This keeps the app easier to understand and easier to extend without a UI-heavy route file.
 
-### TanStack Query for server state, Zustand for UI state
+### Query + state split
 
-- Query is used for config, doctors, slots, and prescriptions data
-- Zustand is used for lightweight toggles such as mock failure states and config mode
+- TanStack Query handles configuration and remote-like data access
+- Zustand handles lightweight local controls and UI simulation states
+- This mirrors a realistic app split between remote data and local interaction state
 
 ### Validation at the boundary
 
-Config and request payloads are parsed with Zod before being used. This keeps app state consistent and prevents invalid remote data from spreading into UI components.
+Config and booking payloads are parsed through strict schemas before they are used. This protects the app from invalid theme content or broken booking requests.
 
-### Mock backend matches the real interface
+### Mock backend designed to match real contracts
 
-The mock API client intentionally mirrors the same service interface as a future real backend. It means the rest of the app can stay stable while the data layer changes underneath.
+The mock service intentionally mirrors the shapes and flows a real backend would expose. That allows the rest of the app to remain stable while the data layer changes underneath.
 
-### Theme derived from config
+### Config-driven theming
 
-The app converts config colours into a validated theme rather than hard-coding raw colours across screens. This makes the Diwali / normal mode switch real and consistent.
+The app derives its theme from validated config colors and gradients rather than hard-coded values in screens. The Diwali variant and the normal mode are therefore driven from the same underlying theme model.
 
 ## What was cut and why
 
-This version intentionally does not include:
+This prototype intentionally leaves out:
 
-- full production backend integration
-- real payment / booking persistence
-- offline sync, push notifications, or deep auth flows
-- a large component library or design system package
-- exhaustive visual polish across every screen and edge case
+- production auth and identity flows
+- production payment and billing integration
+- offline sync and push notifications
+- large design-system adoption
+- full healthcare backend deployment and compliance workflows
 
 Why:
 
-- the goal was to keep the prototype focused on the config-driven home experience and booking flow
-- the architecture is intentionally lean so it remains easy to extend without reworking the foundation
-- a smaller scope reduces risk and makes the code reviewable in one pass
+- the task was to validate the architecture and interaction model, not ship a finished clinical platform
+- the repository remains lightweight and reviewable
+- the code is structured so future backend and production work can be added without reworking the foundation
 
 ## Honest time spent
 
-This project took roughly:
+This project took approximately:
 
-- 1 hour to reset the Expo starter and set the project structure
-- 2–3 hours to align the config, schema, mock data, and typed contracts
-- 1–2 hours to fix the compatibility and import issues across the app and tests
-- 1 hour to tune the home-section visual refinements and status-bar/header behavior
-- 0.5–1 hour for validation and final cleanup
+- 1 hour to reset the Expo starter and align the project skeleton
+- 2–3 hours to define the config, mock data, and contracts
+- 1–2 hours to fix compatibility and schema drift across screens, tests, and mocks
+- 1 hour to tune the home layout, card styling, and safe-area/header behavior
+- 0.5–1 hour for final validation and documentation cleanup
 
-Total: about 6–9 focused hours for a working, structured prototype rather than a production-grade healthcare app.
+Total: roughly 6–9 focused hours for a working, structured prototype rather than a production-grade medical app.
 
 ## Android APK / installable build
 
-### Option A: local APK build (Android)
+### Local Android build
+
+This repo includes an Expo-generated Android project, but the local release APK will only build on a machine with the Android SDK installed and configured.
 
 ```bash
 npx expo prebuild --clean
@@ -117,27 +134,43 @@ cd android
 ./gradlew assembleRelease
 ```
 
-The generated APK will usually be under:
+If the SDK is not configured, Gradle will fail with:
+
+```text
+SDK location not found. Define a valid SDK location with an ANDROID_HOME environment variable or by setting the sdk.dir in local.properties.
+```
+
+The required local configuration is typically:
+
+```properties
+sdk.dir=C:\Users\<your-user>\AppData\Local\Android\Sdk
+```
+
+Place that file in:
+
+```text
+android/local.properties
+```
+
+Once configured, the APK is generated under:
 
 ```text
 android/app/build/outputs/apk/release/
 ```
 
-Install it on a device with Android 12+ by enabling "Install unknown apps" for your file manager or Android package installer, then opening the APK.
+### Expo build option
 
-### Option B: Expo build link
+If you are using EAS or another Expo build pipeline, run a signed Android build and share the resulting link with the install steps in the release notes or project documentation.
 
-If you use EAS or an Expo-hosted build service, generate a build and share the link in the project release notes. The app should be distributed as a signed Android APK or an Expo build link, with the install steps listed in the release description.
+### Distribution guidance
 
-### Release notes / distribution
-
-- Attach the APK to a GitHub Release if you are publishing from a GitHub-backed repo.
-- If a GitHub Release is not available yet, share the Expo build URL in the repo README and mention the exact installation steps.
-- Keep the instructions explicit: install the APK, accept the security prompt, then open the app.
+- Attach the APK to a GitHub Release when available
+- If using Expo build, include the direct link and installation steps
+- Ask users to allow installs from unknown sources on Android before opening the APK
 
 ## Demo assets and recordings
 
-The repo includes a demo-ready folder for screenshots and a short video walkthrough:
+The repo is prepared for screenshots and a short demo walkthrough in:
 
 ```text
 docs/
@@ -147,7 +180,21 @@ docs/
     demo-video.mp4
 ```
 
-Place the Android device screenshots and the 2–3 minute walkthrough video there. The demo should include both themes, the forced booking failure flow, and the reminders flow.
+Add the required device screenshots and the 2–3 minute walkthrough there. The demo should cover the normal and Diwali theme states, the forced conflict path, and the booking flow.
+
+## Current validation status
+
+### Verified
+
+- app typecheck passes
+- relevant Jest suites pass
+- config validation and booking state logic are stable
+- home section rendering is stable under tests
+
+### Not fully complete in this environment
+
+- Android release APK generation requires a valid local Android SDK setup
+- no signed release artifact has been attached yet from this machine because Gradle cannot resolve the SDK path
 
 ## Current status
 
@@ -157,6 +204,6 @@ This repo is a functional prototype foundation with:
 - mock doctor and booking flows
 - responsive home section rendering
 - theme switching between normal and Diwali variants
-- focused Jest coverage for config and booking behavior
+- focused regression tests for config and booking logic
 
-It is ready for extension, but it is still intentionally scoped as a product prototype rather than a completed clinical platform.
+It is ready for extension as a product prototype, but it remains intentionally scoped and not a full production clinical platform.
